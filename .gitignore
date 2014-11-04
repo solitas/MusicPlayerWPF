@@ -76,4 +76,6 @@ TestProj/bin/*.*
 TestProj/obj/*.*
 MP3Testing/bin/*.*
 MP3Testing/obj/*.*
-MP3Testing.v12.suo
+*.suo
+MP3Testing/obj/Debug/MP3Testing.csproj.FileListAbsolute.txt
+TestProj/obj/Debug/TestProj.csproj.FileListAbsolute.txt
