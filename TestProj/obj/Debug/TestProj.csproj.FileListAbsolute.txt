@@ -22,3 +22,18 @@ D:\Works\새 폴더\Projects\MP3Testing\TestProj\obj\Debug\TestProj.csprojResolv
 D:\Works\새 폴더\Projects\MP3Testing\TestProj\obj\Debug\TestProj.dll
 D:\Works\새 폴더\Projects\MP3Testing\TestProj\obj\Debug\TestProj.pdb
 D:\Works\새 폴더\Projects\MP3Testing\TestProj\bin\Debug\WPFSoundVisualizationLib.dll
+D:\Works\MusicPlayerWPF\TestProj\bin\Debug\TestProj.dll
+D:\Works\MusicPlayerWPF\TestProj\bin\Debug\TestProj.pdb
+D:\Works\MusicPlayerWPF\TestProj\bin\Debug\MP3Testing.exe
+D:\Works\MusicPlayerWPF\TestProj\bin\Debug\WPFSoundVisualizationLib.dll
+D:\Works\MusicPlayerWPF\TestProj\bin\Debug\NAudio.dll
+D:\Works\MusicPlayerWPF\TestProj\bin\Debug\Mp3Lib.dll
+D:\Works\MusicPlayerWPF\TestProj\bin\Debug\Id3Lib.dll
+D:\Works\MusicPlayerWPF\TestProj\bin\Debug\ICSharpCode.SharpZipLib.dll
+D:\Works\MusicPlayerWPF\TestProj\bin\Debug\MP3Testing.pdb
+D:\Works\MusicPlayerWPF\TestProj\bin\Debug\NAudio.xml
+D:\Works\MusicPlayerWPF\TestProj\bin\Debug\Mp3Lib.pdb
+D:\Works\MusicPlayerWPF\TestProj\bin\Debug\Id3Lib.pdb
+D:\Works\MusicPlayerWPF\TestProj\obj\Debug\TestProj.csprojResolveAssemblyReference.cache
+D:\Works\MusicPlayerWPF\TestProj\obj\Debug\TestProj.dll
+D:\Works\MusicPlayerWPF\TestProj\obj\Debug\TestProj.pdb

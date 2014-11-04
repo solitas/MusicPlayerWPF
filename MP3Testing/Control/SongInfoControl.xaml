@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="MP3Testing.Control.SongInfoControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d">
+    <Grid ClipToBounds="True" Width="230">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Border  Grid.Row="0" BorderThickness="1">
+            <Image x:Name="AlbumArtImage" Width="180" Height="180" Stretch="UniformToFill"/>
+        </Border>
+        <StackPanel Grid.Row="1" VerticalAlignment="Stretch" ClipToBounds="True" >
+            <Label x:Name="TitleLabel" Content="Title" FontSize="13" FontWeight="UltraBold" Padding="3" Foreground="#FFF3F3F3"></Label>
+            <Label x:Name="ArtistLabel" Content="Artist" FontSize="10" Foreground="#FFF3F3F3" Padding="3"></Label>
+            <Label x:Name="AlbumLabel" Content="Album" FontSize="10" Foreground="#FFF3F3F3" Padding="3"></Label>
+        </StackPanel>
+    </Grid>
+</UserControl>

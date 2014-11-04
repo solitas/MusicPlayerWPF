@@ -27,10 +27,12 @@ namespace MP3Testing.Player
         public Action<float> SetVolumeDelegate;
         
         private readonly Playlist _playlist;    // 재생 목록 리스트
+
         private readonly PlayOrder _order;  // 재생 순서 인덱스
 
         /* NAudio 객체 */
-        private IWavePlayer _wavePlayer;    
+        private IWavePlayer _wavePlayer;
+    
         private BlockAlignReductionStream _stream;
         
         /// <summary>

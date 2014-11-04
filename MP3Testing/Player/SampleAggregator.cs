@@ -1,5 +1,4 @@
 ﻿using System;
-using System;
 using NAudio.Dsp;
 
 namespace MP3Testing.Player

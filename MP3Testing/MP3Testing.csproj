@@ -73,6 +73,9 @@
     <Compile Include="AlbumInfoControl.xaml.cs">
       <DependentUpon>AlbumInfoControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Control\SongInfoControl.xaml.cs">
+      <DependentUpon>SongInfoControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MediaInfo.cs" />
     <Compile Include="Player\SampleAggregator.cs" />
     <Compile Include="Properties\Annotations.cs" />
@@ -81,6 +84,14 @@
     <Page Include="AlbumInfoControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Control\SongInfoControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ExpressionDark.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

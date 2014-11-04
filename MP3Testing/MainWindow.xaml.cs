@@ -4,11 +4,16 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Mp3Lib;
 using MP3Testing.Player;
+using Application = System.Windows.Application;
 using DragEventArgs = System.Windows.DragEventArgs;
 using MessageBox = System.Windows.MessageBox;
 using ListViewItem = System.Windows.Controls.ListViewItem;
@@ -45,6 +50,10 @@ namespace MP3Testing
             });
 
             _player.NextPlayEvent += NextPlayEventHandler;
+
+            Resources.MergedDictionaries.Clear();
+            ResourceDictionary themeResources = Application.LoadComponent(new Uri("ExpressionDark.xaml", UriKind.Relative)) as ResourceDictionary;
+            Resources.MergedDictionaries.Add(themeResources);
         }
 
         private void MainWindow_OnClosing(object sender, CancelEventArgs e)
@@ -87,9 +96,19 @@ namespace MP3Testing
             FileList.ScrollIntoView(item);  // scroll 이동
 
             _totalTime = DateTime.MinValue.Add(info.TotalTime);
+            FormatConvertedBitmap fcb = new FormatConvertedBitmap();
 
-            TitleName.Content = info.Title;
-            AlbumImage.Source = info.Image;
+            fcb.BeginInit();
+            fcb.Source = (BitmapSource)info.Image;
+            fcb.DestinationFormat = PixelFormats.Gray32Float;
+            fcb.EndInit();
+
+            MainBorder.Background = new ImageBrush(fcb);
+            SongInfoCtrl.TitleLabel.Content = info.Title;
+            SongInfoCtrl.AlbumArtImage.Source = info.Image;
+            SongInfoCtrl.ArtistLabel.Content = info.Artist;
+            SongInfoCtrl.AlbumLabel.Content = info.Album;
+
             TotalTimeLb.Content = _totalTime.ToString("mm:ss");
    
             TimerStart();
@@ -131,9 +150,21 @@ namespace MP3Testing
                     {
                         var info = _player.GetMediaInfo(FileList.SelectedIndex);
                         _totalTime = DateTime.MinValue.Add(info.TotalTime);
+                        Title = info.Title + "::" + info.Artist;
+                        
+                        FormatConvertedBitmap fcb = new FormatConvertedBitmap();
+                       
+                        fcb.BeginInit();
+                        fcb.Source = (BitmapSource)info.Image;
+                        fcb.DestinationFormat = PixelFormats.Gray32Float;
+                        fcb.EndInit();
 
-                        TitleName.Content = info.Title;
-                        AlbumImage.Source = info.Image;
+                        MainBorder.Background = new ImageBrush(fcb);
+                        SongInfoCtrl.TitleLabel.Content = info.Title;
+                        SongInfoCtrl.AlbumArtImage.Source = info.Image;
+                        SongInfoCtrl.ArtistLabel.Content = info.Artist;
+                        SongInfoCtrl.AlbumLabel.Content = info.Album;
+
                         TotalTimeLb.Content = _totalTime.ToString("mm:ss");
                     }
 
@@ -210,6 +241,16 @@ namespace MP3Testing
         }
 
         private void UIElement_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            DragMove();
+        }
+
+        private void MainBorder_OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            DragMove();
+        }
+
+        private void MovingWindowMouseDown(object sender, MouseButtonEventArgs e)
         {
             DragMove();
         }
