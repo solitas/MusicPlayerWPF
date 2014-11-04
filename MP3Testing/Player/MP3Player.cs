@@ -375,7 +375,7 @@ namespace MP3Testing.Player
             return (int)((frequency / maxFrequency) * (fftDataSize / 2));
         }
 
-        private bool isPlaying;
+        private bool _isPlaying;
         public bool IsPlaying
         {
             get
@@ -385,9 +385,9 @@ namespace MP3Testing.Player
             }
             protected set
             {
-                bool oldValue = isPlaying;
-                isPlaying = value;
-                if (oldValue != isPlaying)
+                bool oldValue = _isPlaying;
+                _isPlaying = value;
+                if (oldValue != _isPlaying)
                     NotifyPropertyChanged("IsPlaying");
             }
         }
