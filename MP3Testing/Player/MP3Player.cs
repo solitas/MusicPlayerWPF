@@ -393,15 +393,15 @@ namespace MP3Testing.Player
         }
 
         private SampleAggregator _sampleAggregator;
-        private double channelLength;
+        private double _channelLength;
         public double ChannelLength
         {
-            get { return channelLength; }
+            get { return _channelLength; }
             protected set
             {
-                double oldValue = channelLength;
-                channelLength = value;
-                if (oldValue != channelLength)
+                double oldValue = _channelLength;
+                _channelLength = value;
+                if (oldValue != _channelLength)
                     NotifyPropertyChanged("ChannelLength");
             }
         }
