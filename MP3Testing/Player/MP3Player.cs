@@ -50,6 +50,7 @@ namespace MP3Testing.Player
         /// </summary>
         private bool _changeSong = true;
 
+        private float _volumn = 1.0f;
         #region Properties
         public IPlaybackState State
         {
@@ -227,17 +228,24 @@ namespace MP3Testing.Player
                 throw new InvalidOperationException("Not a correct audio file type");
 
             var channel = new WaveChannel32(_stream);
+            channel.PadWithZeroes = false;
             channel.Sample += ChannelOnSample;
             // Volume 설정
-            SetVolumeDelegate = vol => channel.Volume = vol;
-            SetVolumeDelegate(1.0f);
+            SetVolumeDelegate = vol =>
+            {
+                _volumn = vol;
+                channel.Volume = _volumn;
+            };
+            SetVolumeDelegate(_volumn);
 
             _sampleAggregator = new SampleAggregator(fftDataSize);
-
+            
             _wavePlayer = new DirectSoundOut();
             _wavePlayer.Init(channel);
             _wavePlayer.PlaybackStopped += WavePlayerOnPlaybackStopped;
         }
+
+
         private const int repeatThreshold = 200;
         private void ChannelOnSample(object sender, SampleEventArgs sampleEventArgs)
         {

@@ -31,3 +31,14 @@ TestProj/obj/Debug/TestProj.csproj.FileListAbsolute.txt
 TestProj/obj/Debug/TestProj.csprojResolveAssemblyReference.cache
 TestProj/obj/Debug/TestProj.dll
 TestProj/obj/Debug/TestProj.pdb
+MP3Testing/bin/Debug/MP3Testing.exe
+MP3Testing/bin/Debug/MP3Testing.pdb
+MP3Testing/obj/Debug/MP3Testing.exe
+MP3Testing/obj/Debug/MP3Testing.pdb
+TestProj/bin/Debug/MP3Testing.exe
+TestProj/bin/Debug/MP3Testing.pdb
+TestProj/bin/Debug/TestProj.dll
+TestProj/bin/Debug/TestProj.pdb
+TestProj/obj/Debug/TestProj.csprojResolveAssemblyReference.cache
+TestProj/obj/Debug/TestProj.dll
+TestProj/obj/Debug/TestProj.pdb

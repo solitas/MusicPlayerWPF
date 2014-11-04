@@ -52,7 +52,7 @@ namespace MP3Testing
             _player.NextPlayEvent += NextPlayEventHandler;
 
             Resources.MergedDictionaries.Clear();
-            ResourceDictionary themeResources = Application.LoadComponent(new Uri("ExpressionDark.xaml", UriKind.Relative)) as ResourceDictionary;
+            var themeResources = Application.LoadComponent(new Uri("ExpressionDark.xaml", UriKind.Relative)) as ResourceDictionary;
             Resources.MergedDictionaries.Add(themeResources);
         }
 
