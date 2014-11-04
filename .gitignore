@@ -72,3 +72,8 @@ obj/
 [Rr]elease*/
 _ReSharper*/
 [Tt]est[Rr]esult*
+TestProj/bin/*.*
+TestProj/obj/*.*
+MP3Testing/bin/*.*
+MP3Testing/obj/*.*
+MP3Testing.v12.suo
