@@ -4,17 +4,17 @@
 exe
 C#
 .cs
-C:\Users\Solitas\Documents\GitHub\MP3Testing\MusicPlayerWPF\MP3Testing\obj\Debug\
+D:\Works\MusicPlayerWPF\MP3Testing\obj\Debug\
 MP3Testing
 none
 false
 DEBUG;TRACE
-C:\Users\Solitas\Documents\GitHub\MP3Testing\MusicPlayerWPF\MP3Testing\App.xaml
-41206534930
+D:\Works\MusicPlayerWPF\MP3Testing\App.xaml
+52032510276
 
-24752011987
-20-2073435646
-AlbumInfoControl.xaml;Control\SongInfoControl.xaml;ExpressionDark.xaml;MainWindow.xaml;
+251209884380
+19-95637649
+AlbumInfoControl.xaml;Control\FileListItem.xaml;Control\SongInfoControl.xaml;ExpressionDark.xaml;MainWindow.xaml;
 
-True
+False
 

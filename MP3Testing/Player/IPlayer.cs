@@ -14,8 +14,8 @@ namespace MP3Testing.Player
 
         void Pause();
 
-        void Forward();
+        int Forward();
 
-        void Backward();
+        int Backward();
     }
 }

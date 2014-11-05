@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using WPFSoundVisualizationLib;
@@ -24,6 +26,7 @@ namespace MP3Testing.Player
         private const int FftDataSize = (int)FFTDataSize.FFT2048;
 
         public event NextPlayDelegate NextPlayEvent;
+
         public Action<float> SetVolumeDelegate;
 
         private readonly Playlist _playlist;    // 재생 목록 리스트
@@ -34,7 +37,7 @@ namespace MP3Testing.Player
 
         /* NAudio 객체 */
         private IWavePlayer _wavePlayer;
-
+        private WaveChannel32 _channel;
         private BlockAlignReductionStream _stream;
 
         /// <summary>
@@ -62,11 +65,19 @@ namespace MP3Testing.Player
                 _repeatState = value;
             }
         }
-        public List<string> PlayList
+        public List<string> PlayFileList
         {
             get
             {
                 return _playlist.Files;
+            }
+        }
+
+        public Playlist PlayList
+        {
+            get
+            {
+                return _playlist;
             }
         }
         public TimeSpan TotalTime
@@ -178,18 +189,41 @@ namespace MP3Testing.Player
         {
             if (_currentState.CanPause(this))
             {
+
                 _wavePlayer.Pause();
             }
         }
 
-        public void Forward()
+        public int Forward()
         {
+            int forwardIndex = _order.NextIndex;
+            UpdatePlayIndex(forwardIndex);
 
+            var resource = _playlist.MediaList[forwardIndex].FilePath;
+            if (_currentState.CanPlay(resource, this))
+            {
+                if (_wavePlayer != null)
+                    _wavePlayer.Play();
+                IsPlaying = true;
+            }
+
+            return forwardIndex;
         }
 
-        public void Backward()
+        public int Backward()
         {
+            int backIndex = _order.OldIndex;
+            UpdatePlayIndex(backIndex);
 
+            var resource = _playlist.MediaList[backIndex].FilePath;
+            if (_currentState.CanPlay(resource, this))
+            {
+                if (_wavePlayer != null)
+                    _wavePlayer.Play();
+                IsPlaying = true;
+            }
+
+            return backIndex;
         }
 
         public void ChangePlaybackState(IPlaybackState newState)
@@ -203,6 +237,7 @@ namespace MP3Testing.Player
             {
                 // 스트림 해제 시 PlaybackStopped 이벤트가 두번 발생 방지
                 _wavePlayer.PlaybackStopped -= WavePlayerOnPlaybackStopped;
+                _channel.Sample -= ChannelOnSample;
             }
 
             DisposeWave();
@@ -223,25 +258,26 @@ namespace MP3Testing.Player
             else
                 throw new InvalidOperationException("Not a correct audio file type");
 
-            var channel = new WaveChannel32(_stream)
+            _channel = new WaveChannel32(_stream)
             {
                 PadWithZeroes = false
             };
 
-            channel.Sample += ChannelOnSample;
+            _channel.Sample += ChannelOnSample;
 
             // Volume 설정
             SetVolumeDelegate = vol =>
             {
                 _volumn = vol;
-                channel.Volume = _volumn;
+                _channel.Volume = _volumn;
             };
             SetVolumeDelegate(_volumn);
 
             _sampleAggregator = new SampleAggregator(FftDataSize);
 
-            _wavePlayer = new DirectSoundOut();
-            _wavePlayer.Init(channel);
+            _wavePlayer = new WasapiOut(AudioClientShareMode.Shared, false, 150);
+            //_wavePlayer = new DirectSoundOut();
+            _wavePlayer.Init(_channel);
             _wavePlayer.PlaybackStopped += WavePlayerOnPlaybackStopped;
         }
 
@@ -258,7 +294,6 @@ namespace MP3Testing.Player
 
                     _sampleAggregator.Clear();
                 }
-
             }
         }
 
@@ -281,7 +316,14 @@ namespace MP3Testing.Player
         }
         private void UpdatePlayIndex(int index)
         {
-            _order.OldIndex = _order.CurrentIndex;
+            if (index == 0)
+            {
+                _order.OldIndex = _playlist.FileCount - 1;
+            }
+            else
+            {
+                _order.OldIndex = index - 1;
+            }
             _order.CurrentIndex = index;
 
             if (++index < _playlist.FileCount)
@@ -307,7 +349,6 @@ namespace MP3Testing.Player
         /// <param name="stoppedEventArgs"></param>
         private void WavePlayerOnPlaybackStopped(object sender, StoppedEventArgs stoppedEventArgs)
         {
-
             // 한 곡 플레이가 인터럽트 없이 끝나면 처리
             if (_order.NextIndex > 0)
             {
@@ -332,16 +373,19 @@ namespace MP3Testing.Player
         }
         private void DisposeWave()
         {
-            if (_wavePlayer != null)
-            {
-                _wavePlayer.Dispose();
-                _wavePlayer = null;
-            }
-
             if (_stream != null)
             {
                 _stream.Dispose();
                 _stream = null;
+            }
+            if (_channel != null)
+            {
+                _channel.Dispose();
+            }
+            if (_wavePlayer != null)
+            {
+                _wavePlayer.Dispose();
+                _wavePlayer = null;
             }
         }
 

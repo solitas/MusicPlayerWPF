@@ -9,8 +9,8 @@
             <RowDefinition Height="3*"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <Border  Grid.Row="0" BorderThickness="1">
-            <Image x:Name="AlbumArtImage" Width="180" Height="180" Stretch="UniformToFill"/>
+        <Border  Grid.Row="0" BorderThickness="5"  Width="155" Height="155" BorderBrush="White">
+            <Image x:Name="AlbumArtImage" Width="150" Height="150" Stretch="UniformToFill"/>
         </Border>
         <StackPanel Grid.Row="1" VerticalAlignment="Stretch" ClipToBounds="True" >
             <Label x:Name="TitleLabel" Content="{Binding Title}" FontSize="13" FontWeight="UltraBold" Padding="3" Foreground="#FFF3F3F3"></Label>

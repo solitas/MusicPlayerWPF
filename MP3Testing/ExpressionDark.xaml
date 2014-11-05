@@ -22,7 +22,7 @@
     <SolidColorBrush x:Key="ShadeBrush"
                      Color="#FF434343" />
 
-    <Color x:Key="TopGradientSelectColor">#FFFFFFFF</Color>
+    <Color x:Key="TopGradientSelectColor">#FF595959</Color>
     <Color x:Key="BottomGradientSelectColor">#FF737373</Color>
 
     <Color x:Key="BlackColor">#FF000000</Color>
@@ -6203,8 +6203,7 @@
                      Color="#828790" />
     <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}"
            TargetType="{x:Type ScrollViewer}">
-        <Setter Property="Focusable"
-                Value="false" />
+        <Setter Property="Focusable" Value="false" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ScrollViewer}">
@@ -6223,6 +6222,7 @@
                                           DockPanel.Dock="Top"
                                           HorizontalScrollBarVisibility="Hidden"
                                           VerticalScrollBarVisibility="Hidden">
+                                <!--
                                 <GridViewHeaderRowPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                                             Margin="2,0,2,0"
                                                             AllowsColumnReorder="{Binding Path=TemplatedParent.View.AllowsColumnReorder, RelativeSource={RelativeSource TemplatedParent}}"
@@ -6232,7 +6232,7 @@
                                                             ColumnHeaderTemplateSelector="{Binding Path=TemplatedParent.View.ColumnHeaderTemplateSelector, RelativeSource={RelativeSource TemplatedParent}}"
                                                             ColumnHeaderToolTip="{Binding Path=TemplatedParent.View.ColumnHeaderToolTip, RelativeSource={RelativeSource TemplatedParent}}"
                                                             Columns="{Binding Path=TemplatedParent.View.Columns, RelativeSource={RelativeSource TemplatedParent}}" />
-
+-->
                             </ScrollViewer>
                             <ScrollContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                                     x:Name="PART_ScrollContentPresenter"
@@ -6344,7 +6344,6 @@
                 Value="{DynamicResource TextBrush}" />
         <Setter Property="FocusVisualStyle"
                 Value="{StaticResource ListViewItemFocusVisual}" />
-
         <Setter Property="Background"
                 Value="Transparent" />
         <Setter Property="BorderBrush"
@@ -6357,7 +6356,6 @@
                 Value="5,2,5,2" />
         <Setter Property="VerticalContentAlignment"
                 Value="Center" />
-        <Setter Property="OverridesDefaultStyle" Value="true"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListViewItem}">
@@ -6423,29 +6421,25 @@
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="2"
                             x:Name="border">
-
                         <Grid Margin="2,0,2,0">
                             <Rectangle x:Name="Background"
                                        IsHitTestVisible="False"
                                        Opacity="0.25"
                                        Fill="{StaticResource NormalBrush}"
                                        RadiusX="1"
-                                       RadiusY="1" 
-                                       Height="30"/>
+                                       RadiusY="1"/>
                             <Rectangle x:Name="HoverRectangle"
                                        IsHitTestVisible="False"
                                        Opacity="0"
                                        Fill="{StaticResource NormalBrush}"
                                        RadiusX="1"
-                                       RadiusY="1"
-                                       Height="30"/>
+                                       RadiusY="1"/>
                             <Rectangle x:Name="SelectedRectangle"
                                        IsHitTestVisible="False"
                                        Opacity="0"
                                        Fill="{StaticResource SelectedBackgroundBrush}"
                                        RadiusX="1"
-                                       RadiusY="1"
-                                       Height="30"/>
+                                       RadiusY="1"/>
                             <ContentPresenter  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                                   Margin="0,2,0,2"
                                                   VerticalAlignment="Stretch"
@@ -6506,9 +6500,7 @@
                                 <Condition Property="Selector.IsSelectionActive"
                                            Value="false" />
                             </MultiTrigger.Conditions>
-
                         </MultiTrigger>
-
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -6615,7 +6607,6 @@
                     </ControlTemplate.Resources>
                     <Grid Margin="0,1,0,1">
                         <Grid>
-
                             <Border x:Name="Main"
                                     BorderThickness="{TemplateBinding BorderThickness}"
                                     Padding="{TemplateBinding Padding}"
@@ -6651,7 +6642,6 @@
                                     BorderBrush="{DynamicResource PressedBorderBrush}"
                                     CornerRadius="0,0,0,0"
                                     Opacity="0" />
-
                             <Border BorderThickness="{TemplateBinding BorderThickness}"
                                     Padding="{TemplateBinding Padding}">
                                 <Border.BorderBrush>

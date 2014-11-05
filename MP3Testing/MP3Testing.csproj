@@ -39,15 +39,11 @@
   <ItemGroup>
     <Reference Include="eLyrics_windows, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\eLyrics_windows.dll</HintPath>
+      <HintPath>..\..\..\Librarys\Mp3Lib\eLyrics_windows.dll</HintPath>
     </Reference>
     <Reference Include="Id3Lib, Version=0.6.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Debug\Id3Lib.dll</HintPath>
-    </Reference>
-    <Reference Include="JLyrics, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\JLyrics.dll</HintPath>
     </Reference>
     <Reference Include="Mp3Lib, Version=0.6.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -83,6 +79,9 @@
     <Compile Include="AlbumInfoControl.xaml.cs">
       <DependentUpon>AlbumInfoControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Control\FileListItem.xaml.cs">
+      <DependentUpon>FileListItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Control\SimpleSlider.cs" />
     <Compile Include="Control\SongInfoControl.xaml.cs">
       <DependentUpon>SongInfoControl.xaml</DependentUpon>
@@ -93,6 +92,10 @@
     <Compile Include="UIHelper.cs" />
     <Compile Include="Utils.cs" />
     <Page Include="AlbumInfoControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Control\FileListItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
