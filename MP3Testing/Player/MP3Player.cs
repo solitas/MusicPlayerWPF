@@ -21,7 +21,7 @@ namespace MP3Testing.Player
     }
     public class Mp3Player : IPlayer, IPlaybackContext, ISpectrumPlayer, IWaveformPlayer
     {
-        private const int FftDataSize = (int) FFTDataSize.FFT2048;
+        private const int FftDataSize = (int)FFTDataSize.FFT2048;
 
         public event NextPlayDelegate NextPlayEvent;
         public Action<float> SetVolumeDelegate;
@@ -202,9 +202,9 @@ namespace MP3Testing.Player
             if (_wavePlayer != null)
             {
                 // 스트림 해제 시 PlaybackStopped 이벤트가 두번 발생 방지
-                _wavePlayer.PlaybackStopped -= WavePlayerOnPlaybackStopped;    
+                _wavePlayer.PlaybackStopped -= WavePlayerOnPlaybackStopped;
             }
-            
+
             DisposeWave();
 
             WaveStream pcm;
@@ -248,13 +248,17 @@ namespace MP3Testing.Player
 
         private void ChannelOnSample(object sender, SampleEventArgs sampleEventArgs)
         {
-            _sampleAggregator.Add(sampleEventArgs.Left, sampleEventArgs.Right);
-            long repeatStopPosition = (long)((SelectionEnd.TotalSeconds / _stream.TotalTime.TotalSeconds) * _stream.Length);
-            if (((SelectionEnd - SelectionBegin) >= TimeSpan.FromMilliseconds(RepeatThreshold)) &&
-                _stream.Position >= repeatStopPosition)
+            if (_stream != null)
             {
+                _sampleAggregator.Add(sampleEventArgs.Left, sampleEventArgs.Right);
+                long repeatStopPosition = (long)((SelectionEnd.TotalSeconds / _stream.TotalTime.TotalSeconds) * _stream.Length);
+                if (((SelectionEnd - SelectionBegin) >= TimeSpan.FromMilliseconds(RepeatThreshold)) &&
+                    _stream.Position >= repeatStopPosition)
+                {
 
-                _sampleAggregator.Clear();
+                    _sampleAggregator.Clear();
+                }
+
             }
         }
 

@@ -1,19 +1,19 @@
 ﻿MP3Testing
 
 
-winexe
+exe
 C#
 .cs
-D:\Works\MusicPlayerWPF\MP3Testing\obj\Debug\
+C:\Users\Solitas\Documents\GitHub\MP3Testing\MusicPlayerWPF\MP3Testing\obj\Debug\
 MP3Testing
 none
 false
 DEBUG;TRACE
-D:\Works\MusicPlayerWPF\MP3Testing\App.xaml
+C:\Users\Solitas\Documents\GitHub\MP3Testing\MusicPlayerWPF\MP3Testing\App.xaml
 41206534930
 
-24-1523039648
-18565473067
+24752011987
+20-2073435646
 AlbumInfoControl.xaml;Control\SongInfoControl.xaml;ExpressionDark.xaml;MainWindow.xaml;
 
 True

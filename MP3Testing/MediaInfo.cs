@@ -176,7 +176,7 @@ namespace MP3Testing
                 _comment = handler.Comment;
                 _image = Utils.GetImageStream(handler.Picture);
             }
-            catch (Exception)
+            catch (Exception e)
             {
 
             }

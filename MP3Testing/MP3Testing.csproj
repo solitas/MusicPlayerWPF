@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{64157BF1-8F2A-4E79-BCFF-6D9AACB266E4}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MP3Testing</RootNamespace>
     <AssemblyName>MP3Testing</AssemblyName>
@@ -37,11 +37,21 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Id3Lib">
-      <HintPath>..\..\..\..\..\Librarys\Mp3Lib\csid3lib-v0.6-src\id3lib\Mp3Lib\bin\Release\Id3Lib.dll</HintPath>
+    <Reference Include="eLyrics_windows, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\eLyrics_windows.dll</HintPath>
     </Reference>
-    <Reference Include="Mp3Lib">
-      <HintPath>..\..\..\..\..\Librarys\Mp3Lib\csid3lib-v0.6-src\id3lib\Mp3Lib\bin\Release\Mp3Lib.dll</HintPath>
+    <Reference Include="Id3Lib, Version=0.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\Id3Lib.dll</HintPath>
+    </Reference>
+    <Reference Include="JLyrics, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\JLyrics.dll</HintPath>
+    </Reference>
+    <Reference Include="Mp3Lib, Version=0.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\Mp3Lib.dll</HintPath>
     </Reference>
     <Reference Include="NAudio">
       <HintPath>..\packages\NAudio.1.7.1\lib\net35\NAudio.dll</HintPath>

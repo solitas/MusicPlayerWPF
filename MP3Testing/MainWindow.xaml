@@ -43,6 +43,7 @@
                 <Label x:Name="TotalTimeLb" Content="00:00" HorizontalContentAlignment="Right"/>
                 <Slider x:Name="VolumeSlider" Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Right"
                     Maximum="1.0" Minimum="0.0" SmallChange="0.01" ValueChanged="VolumeSlider_OnValueChanged" Value="1.0"/>
+                <Label x:Name="LyicsLabel" VerticalAlignment="Bottom"/>
             </Grid>
             
             <Grid Grid.Row="1">

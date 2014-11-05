@@ -42,6 +42,16 @@ namespace MP3Testing
         {
             set
             {
+                
+                foreach(KeyValuePair<TimeSpan, String> keyValue in currentlyics)
+                {
+                    if (value.Seconds == keyValue.Key.Seconds && value.Minutes == keyValue.Key.Minutes)
+                    {
+                        LyicsLabel.Content = keyValue.Value;
+                        break;
+                    }
+                }
+
                 _currentTime = DateTime.MinValue.Add(_player.CurrentTime);
                 CurrentTimeLb.Content = _currentTime.ToString("mm:ss");
             }
@@ -97,7 +107,7 @@ namespace MP3Testing
             }
         }
 
-        
+
         public void NextPlayEventHandler(int index, MediaInfo info)
         {
             /* 리스트 뷰 선택  해제 */
@@ -121,7 +131,7 @@ namespace MP3Testing
 
             // 곡 정보 업데이트
             SongInfoCtrl.Info = info;
-            
+
             // 탐색 바 최대치 변경
             SeekBar.Maximum = _player.TotalLength;
 
@@ -131,6 +141,7 @@ namespace MP3Testing
 
         private void TimerStart()
         {
+            LyicsLabel.Content = "";
             if (_timer != null)
             {
                 _timer.Stop();
@@ -149,6 +160,7 @@ namespace MP3Testing
                 SeekBar.Value = _player.Position;   // Seekbar 의 포지션을 옮긴다
             }
         }
+        Dictionary<TimeSpan, String> currentlyics;
 
         private void PlayButtonHandler(object sender, RoutedEventArgs e)
         {
@@ -166,11 +178,13 @@ namespace MP3Testing
                     if (!(_player.State is PauseState))
                     {
                         var info = _player.GetMediaInfo(FileList.SelectedIndex);
-                        
+
                         TotalTime = info.TotalTime;
                         Title = info.Title + "::" + info.Artist;
 
-                        UpdateBackground((BitmapSource) info.Image);
+                        GetLyics(info.FilePath);
+
+                        UpdateBackground((BitmapSource)info.Image);
 
                         SongInfoCtrl.Info = info;
                     }
@@ -188,6 +202,44 @@ namespace MP3Testing
             }
         }
 
+        private void GetLyics(string path)
+        {
+            if (currentlyics != null)
+            {
+                currentlyics.Clear();
+                currentlyics = null;
+            }
+            using (Stream tmpStream = new FileStream(path, FileMode.Open))
+            {
+                object o = eLyrics_windows.eLyrics.getLyric(tmpStream);
+
+                if (o.GetType().ToString().IndexOf("KeyValuePair") != -1)
+                {
+                    // 오류
+                    MessageBox.Show(((KeyValuePair<String, String>)o).Value);
+                }
+                else
+                {
+                    currentlyics = new Dictionary<TimeSpan, string>();
+                    // 정상적인 리턴
+                    foreach (KeyValuePair<String, String> keyValue in (Dictionary<String, String>)o)
+                    {
+                        ConvertTime(keyValue.Key, keyValue.Value);
+                    }
+                }
+            }
+
+        }
+        private void ConvertTime(string data, string lyics)
+        {
+            //data 구조 [분:초.밀리초] 가사
+            var seperator = new char[] { '[', ']' };
+            var resultStr = data.Split(seperator, StringSplitOptions.RemoveEmptyEntries);
+            var resultTime = TimeSpan.Parse("00:00:" + resultStr[0]);
+
+            currentlyics.Add(resultTime, lyics);
+
+        }
         private void PauseButtonHandler(object sender, RoutedEventArgs e)
         {
             _player.Pause();
@@ -243,7 +295,7 @@ namespace MP3Testing
             {
                 if (_player != null && _timer != null)
                 {
-                    var convertValue = (long) (e.GetPosition(SeekBar).X/(SeekBar.ActualWidth/SeekBar.Maximum));
+                    var convertValue = (long)(e.GetPosition(SeekBar).X / (SeekBar.ActualWidth / SeekBar.Maximum));
                     SeekBar.Value = convertValue;
                     _player.Seek(convertValue);
                 }
