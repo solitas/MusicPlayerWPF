@@ -21,20 +21,22 @@ namespace MP3Testing.Player
     }
     public class Mp3Player : IPlayer, IPlaybackContext, ISpectrumPlayer, IWaveformPlayer
     {
-        private readonly int fftDataSize = (int)FFTDataSize.FFT2048;
+        private const int FftDataSize = (int) FFTDataSize.FFT2048;
 
         public event NextPlayDelegate NextPlayEvent;
         public Action<float> SetVolumeDelegate;
-        
+
         private readonly Playlist _playlist;    // 재생 목록 리스트
 
         private readonly PlayOrder _order;  // 재생 순서 인덱스
 
+        private const int RepeatThreshold = 200;
+
         /* NAudio 객체 */
         private IWavePlayer _wavePlayer;
-    
+
         private BlockAlignReductionStream _stream;
-        
+
         /// <summary>
         /// playback 상태 객체
         /// </summary>
@@ -44,19 +46,15 @@ namespace MP3Testing.Player
         /// 반복 상태 객체
         /// </summary>
         private RepeatState _repeatState = RepeatState.UnRepeat;
-        
-        /// <summary>
-        /// 자동 곡 변경 확인 
-        /// </summary>
-        private bool _changeSong = true;
 
         private float _volumn = 1.0f;
+
         #region Properties
         public IPlaybackState State
         {
             get { return _currentState; }
         }
-        
+
         public RepeatState Repeat
         {
             set
@@ -152,18 +150,10 @@ namespace MP3Testing.Player
             }
         }
 
-        
+
         // 선택 재생 메소드
         public void Play(int index)
         {
-            if (_wavePlayer != null)
-            {
-                // 이미 플레이어 객체가 만들어 진 상태에서 이 메소드를 호출한 건 
-                // 음악을 바꾸려고 인터럽트 걸었던 것 
-                // 따라서 자동 음악 변경은 false
-                _changeSong = false;
-            }
-
             UpdatePlayIndex(index);
 
             var resource = _playlist.MediaList[index].FilePath;
@@ -189,7 +179,6 @@ namespace MP3Testing.Player
             if (_currentState.CanPause(this))
             {
                 _wavePlayer.Pause();
-                _changeSong = true;
             }
         }
 
@@ -210,6 +199,12 @@ namespace MP3Testing.Player
 
         public void Open(string selectedFile)
         {
+            if (_wavePlayer != null)
+            {
+                // 스트림 해제 시 PlaybackStopped 이벤트가 두번 발생 방지
+                _wavePlayer.PlaybackStopped -= WavePlayerOnPlaybackStopped;    
+            }
+            
             DisposeWave();
 
             WaveStream pcm;
@@ -228,9 +223,13 @@ namespace MP3Testing.Player
             else
                 throw new InvalidOperationException("Not a correct audio file type");
 
-            var channel = new WaveChannel32(_stream);
-            channel.PadWithZeroes = false;
+            var channel = new WaveChannel32(_stream)
+            {
+                PadWithZeroes = false
+            };
+
             channel.Sample += ChannelOnSample;
+
             // Volume 설정
             SetVolumeDelegate = vol =>
             {
@@ -239,20 +238,19 @@ namespace MP3Testing.Player
             };
             SetVolumeDelegate(_volumn);
 
-            _sampleAggregator = new SampleAggregator(fftDataSize);
-            
+            _sampleAggregator = new SampleAggregator(FftDataSize);
+
             _wavePlayer = new DirectSoundOut();
             _wavePlayer.Init(channel);
             _wavePlayer.PlaybackStopped += WavePlayerOnPlaybackStopped;
         }
 
 
-        private const int repeatThreshold = 200;
         private void ChannelOnSample(object sender, SampleEventArgs sampleEventArgs)
         {
             _sampleAggregator.Add(sampleEventArgs.Left, sampleEventArgs.Right);
             long repeatStopPosition = (long)((SelectionEnd.TotalSeconds / _stream.TotalTime.TotalSeconds) * _stream.Length);
-            if (((SelectionEnd - SelectionBegin) >= TimeSpan.FromMilliseconds(repeatThreshold)) &&
+            if (((SelectionEnd - SelectionBegin) >= TimeSpan.FromMilliseconds(RepeatThreshold)) &&
                 _stream.Position >= repeatStopPosition)
             {
 
@@ -298,36 +296,34 @@ namespace MP3Testing.Player
                 _order.CurrentIndex = currentIndex;
             }
         }
-
+        /// <summary>
+        /// 한곡 재생 종료시 처리
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="stoppedEventArgs"></param>
         private void WavePlayerOnPlaybackStopped(object sender, StoppedEventArgs stoppedEventArgs)
         {
-            if (_changeSong)
+
+            // 한 곡 플레이가 인터럽트 없이 끝나면 처리
+            if (_order.NextIndex > 0)
             {
-                // 한 곡 플레이가 인터럽트 없이 끝나면 처리
-                if (_order.NextIndex > 0)
+                if (NextPlayEvent != null)
                 {
-                    if (NextPlayEvent != null)
+                    int playIndex = 0;
+
+                    playIndex = _repeatState == RepeatState.Repeat ? _order.CurrentIndex : _order.NextIndex;
+
+                    var resource = _playlist.MediaList[playIndex].FilePath;
+
+                    UpdatePlayIndex(playIndex); // 인덱스 업데이트
+
+                    if (_currentState.CanPlay(resource, this))
                     {
-                        int playIndex = 0; 
-
-                        playIndex = _repeatState == RepeatState.Repeat ? _order.CurrentIndex : _order.NextIndex;
-
-                        var resource = _playlist.MediaList[playIndex].FilePath;
-
-                        UpdatePlayIndex(playIndex); // 인덱스 업데이트
-
-                        if (_currentState.CanPlay(resource, this))
-                        {
-                            _wavePlayer.Play();
-                        }
-
-                        NextPlayEvent(playIndex, GetMediaInfo(playIndex));
+                        _wavePlayer.Play();
                     }
+
+                    NextPlayEvent(playIndex, GetMediaInfo(playIndex));
                 }
-            }
-            else
-            {
-                _changeSong = true;
             }
         }
         private void DisposeWave()
@@ -344,6 +340,7 @@ namespace MP3Testing.Player
                 _stream = null;
             }
         }
+
         #region INotifyPropertyChanged
 
         private void NotifyPropertyChanged(String info)
@@ -355,7 +352,7 @@ namespace MP3Testing.Player
         }
 
         #endregion
-        
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -372,7 +369,7 @@ namespace MP3Testing.Player
                 maxFrequency = _stream.WaveFormat.SampleRate / 2.0d;
             else
                 maxFrequency = 22050; // Assume a default 44.1 kHz sample rate.
-            return (int)((frequency / maxFrequency) * (fftDataSize / 2));
+            return (int)((frequency / maxFrequency) * (FftDataSize / 2));
         }
 
         private bool _isPlaying;
