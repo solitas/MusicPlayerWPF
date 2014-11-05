@@ -13,9 +13,9 @@
             <Image x:Name="AlbumArtImage" Width="180" Height="180" Stretch="UniformToFill"/>
         </Border>
         <StackPanel Grid.Row="1" VerticalAlignment="Stretch" ClipToBounds="True" >
-            <Label x:Name="TitleLabel" Content="Title" FontSize="13" FontWeight="UltraBold" Padding="3" Foreground="#FFF3F3F3"></Label>
-            <Label x:Name="ArtistLabel" Content="Artist" FontSize="10" Foreground="#FFF3F3F3" Padding="3"></Label>
-            <Label x:Name="AlbumLabel" Content="Album" FontSize="10" Foreground="#FFF3F3F3" Padding="3"></Label>
+            <Label x:Name="TitleLabel" Content="{Binding Title}" FontSize="13" FontWeight="UltraBold" Padding="3" Foreground="#FFF3F3F3"></Label>
+            <Label x:Name="ArtistLabel" Content="{Binding Artist}" FontSize="10" Foreground="#FFF3F3F3" Padding="3"></Label>
+            <Label x:Name="AlbumLabel" Content="{Binding Album}" FontSize="10" Foreground="#FFF3F3F3" Padding="3"></Label>
         </StackPanel>
     </Grid>
 </UserControl>

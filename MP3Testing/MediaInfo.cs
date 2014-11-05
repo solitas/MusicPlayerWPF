@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows.Media;
 using Id3Lib;
 using Mp3Lib;
@@ -8,21 +9,49 @@ namespace MP3Testing
     /// <summary>
     /// 현재 이미지를 메모리에 올림 (수정 요망)
     /// </summary>
-    public class MediaInfo
+    public class MediaInfo : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string resource)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(resource));
+            }
+        }
+
         private string _title;
 
         public string Title
         {
             get { return _title; }
-            set { _title = value; }
+            set
+            {
+                var oldTitle = _title;
+                _title = value;
+                if (oldTitle != _title)
+                {
+                    OnPropertyChanged("Title");
+                }
+            }
         }
         private string _artist;
 
         public string Artist
         {
             get { return _artist; }
-            set { _artist = value; }
+            set
+            {
+                var oldArtist = _artist;
+                _artist = value;
+                if (oldArtist != _artist)
+                {
+                    OnPropertyChanged("Artist");
+                }
+            }
         }
         private string _song;
 
@@ -50,7 +79,15 @@ namespace MP3Testing
         public string Album
         {
             get { return _album; }
-            set { _album = value; }
+            set
+            {
+                var oldAlbum = _album;
+                _album = value;
+                if (oldAlbum != _album)
+                {
+                    OnPropertyChanged("Album");
+                }
+            }
         }
         private string _year;
 
@@ -104,11 +141,17 @@ namespace MP3Testing
             get { return _totalTime; }
             set { _totalTime = value; }
         }
+
+        public MediaInfo()
+        {
+            
+        }
+
         public MediaInfo(string filePath)
         {
             SetData(filePath);
         }
-        
+
         public void SetData(string filePath)
         {
             try
@@ -119,7 +162,7 @@ namespace MP3Testing
                 if (file.Audio.BitRateVbr != null)
                     _vbr = file.Audio.BitRateVbr.Value;
                 _totalTime = TimeSpan.FromSeconds(file.Audio.Duration);
-                
+
                 _filePath = filePath;
 
                 _artist = Utils.ConvertEncoding(handler.Artist);
@@ -135,7 +178,7 @@ namespace MP3Testing
             }
             catch (Exception)
             {
-                
+
             }
         }
     }

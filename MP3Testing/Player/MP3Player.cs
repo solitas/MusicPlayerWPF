@@ -189,6 +189,7 @@ namespace MP3Testing.Player
             if (_currentState.CanPause(this))
             {
                 _wavePlayer.Pause();
+                _changeSong = true;
             }
         }
 
@@ -250,7 +251,6 @@ namespace MP3Testing.Player
         private void ChannelOnSample(object sender, SampleEventArgs sampleEventArgs)
         {
             _sampleAggregator.Add(sampleEventArgs.Left, sampleEventArgs.Right);
-            long repeatStartPosition = (long)((SelectionBegin.TotalSeconds / _stream.TotalTime.TotalSeconds) * _stream.Length);
             long repeatStopPosition = (long)((SelectionEnd.TotalSeconds / _stream.TotalTime.TotalSeconds) * _stream.Length);
             if (((SelectionEnd - SelectionBegin) >= TimeSpan.FromMilliseconds(repeatThreshold)) &&
                 _stream.Position >= repeatStopPosition)
@@ -308,13 +308,13 @@ namespace MP3Testing.Player
                 {
                     if (NextPlayEvent != null)
                     {
-                        int playIndex = 0;
-
-                        UpdatePlayIndex(playIndex); // 인덱스 업데이트
+                        int playIndex = 0; 
 
                         playIndex = _repeatState == RepeatState.Repeat ? _order.CurrentIndex : _order.NextIndex;
 
                         var resource = _playlist.MediaList[playIndex].FilePath;
+
+                        UpdatePlayIndex(playIndex); // 인덱스 업데이트
 
                         if (_currentState.CanPlay(resource, this))
                         {
@@ -408,14 +408,15 @@ namespace MP3Testing.Player
 
         private double channelPosition;
         private bool inChannelTimerUpdate;
+
         public double ChannelPosition
         {
             get { return channelPosition; }
             set
             {
-                if (!inChannelSet)
+                if (!_inChannelSet)
                 {
-                    inChannelSet = true; // Avoid recursion
+                    _inChannelSet = true; // Avoid recursion
                     double oldValue = channelPosition;
                     double position = Math.Max(0, Math.Min(value, ChannelLength));
                     if (!inChannelTimerUpdate && _stream != null)
@@ -423,29 +424,30 @@ namespace MP3Testing.Player
                     channelPosition = position;
                     if (oldValue != channelPosition)
                         NotifyPropertyChanged("ChannelPosition");
-                    inChannelSet = false;
+                    _inChannelSet = false;
                 }
             }
-
         }
 
-        private TimeSpan repeatStart;
-        private TimeSpan repeatStop;
-        private bool inRepeatSet;
-        private bool inChannelSet;
+        private TimeSpan _repeatStart;
+        private TimeSpan _repeatStop;
+        private bool _inRepeatSet;
+        private bool _inChannelSet;
+        private float[] _waveformData;
+
         public TimeSpan SelectionBegin
         {
-            get { return repeatStart; }
+            get { return _repeatStart; }
             set
             {
-                if (!inRepeatSet)
+                if (!_inRepeatSet)
                 {
-                    inRepeatSet = true;
-                    TimeSpan oldValue = repeatStart;
-                    repeatStart = value;
-                    if (oldValue != repeatStart)
+                    _inRepeatSet = true;
+                    TimeSpan oldValue = _repeatStart;
+                    _repeatStart = value;
+                    if (oldValue != _repeatStart)
                         NotifyPropertyChanged("SelectionBegin");
-                    inRepeatSet = false;
+                    _inRepeatSet = false;
                 }
             }
 
@@ -453,31 +455,30 @@ namespace MP3Testing.Player
 
         public TimeSpan SelectionEnd
         {
-            get { return repeatStop; }
+            get { return _repeatStop; }
             set
             {
-                if (!inChannelSet)
+                if (!_inChannelSet)
                 {
-                    inRepeatSet = true;
-                    TimeSpan oldValue = repeatStop;
-                    repeatStop = value;
-                    if (oldValue != repeatStop)
+                    _inRepeatSet = true;
+                    TimeSpan oldValue = _repeatStop;
+                    _repeatStop = value;
+                    if (oldValue != _repeatStop)
                         NotifyPropertyChanged("SelectionEnd");
-                    inRepeatSet = false;
+                    _inRepeatSet = false;
                 }
             }
 
         }
 
-        private float[] waveformData;
         public float[] WaveformData
         {
-            get { return waveformData; }
+            get { return _waveformData; }
             protected set
             {
-                float[] oldValue = waveformData;
-                waveformData = value;
-                if (oldValue != waveformData)
+                float[] oldValue = _waveformData;
+                _waveformData = value;
+                if (oldValue != _waveformData)
                     NotifyPropertyChanged("WaveformData");
             }
         }

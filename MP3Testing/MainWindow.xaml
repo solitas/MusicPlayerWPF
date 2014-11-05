@@ -39,14 +39,16 @@
                         <DropShadowEffect BlurRadius="1" Opacity="0.3" ShadowDepth="3"/>
                     </control:SongInfoControl.Effect>
                 </control:SongInfoControl>
-                <Label x:Name="CurrentTime" Content="00:00" />
+                <Label x:Name="CurrentTimeLb" Content="00:00" />
                 <Label x:Name="TotalTimeLb" Content="00:00" HorizontalContentAlignment="Right"/>
                 <Slider x:Name="VolumeSlider" Width="100" VerticalAlignment="Bottom" HorizontalAlignment="Right"
                     Maximum="1.0" Minimum="0.0" SmallChange="0.01" ValueChanged="VolumeSlider_OnValueChanged" Value="1.0"/>
             </Grid>
+            
             <Grid Grid.Row="1">
                 <mp3Testing:AlbumInfoControl x:Name="AlbumControl" Height="50" HorizontalAlignment="Stretch" Margin="10"/>
             </Grid>
+            
             <Grid Grid.Row="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="8*"/>
@@ -68,7 +70,33 @@
             </Grid>
 
             <Grid x:Name="SeekBarGrid" Row="4" Height="44" VerticalAlignment="Top">
-                <Slider x:Name="SeekBar" PreviewMouseLeftButtonUp="SeekBar_OnPreviewMouseLeftButtonUp" VerticalContentAlignment="Center" Background="Black"/>
+                <control:SimpleSlider x:Name="SeekBar" 
+                        PreviewMouseLeftButtonUp="SeekBar_OnPreviewMouseLeftButtonUp"
+                        PreviewMouseLeftButtonDown="SeekBar_OnPreviewMouseLeftButtonDown"
+                        VerticalContentAlignment="Bottom" IsMoveToPointEnabled="True">
+                    <control:SimpleSlider.Style>
+                        <Style TargetType="{x:Type control:SimpleSlider}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type control:SimpleSlider}">
+                                        <Canvas Margin="0"
+                                        MinHeight="16">
+                                            <Rectangle Height="8"
+                                               Canvas.Top="4"
+                                               Width="{TemplateBinding ActualWidth}"
+                                               VerticalAlignment="Stretch"
+                                               Fill="LightGray" />
+                                            <Rectangle x:Name="PART_Rectangle"
+                                               Height="8"
+                                               Canvas.Top="4"
+                                               Fill="#FF2E2E2E" />
+                                        </Canvas>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </control:SimpleSlider.Style>
+                </control:SimpleSlider>
             </Grid>
         </Grid>
     </Grid>

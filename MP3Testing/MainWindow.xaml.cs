@@ -28,7 +28,24 @@ namespace MP3Testing
         private Mp3Player _player;
         private DispatcherTimer _timer;
         private DateTime _totalTime;
+        private TimeSpan TotalTime
+        {
+            set
+            {
+                _totalTime = DateTime.MinValue.Add(value);
+                TotalTimeLb.Content = _totalTime.ToString("mm:ss");
+            }
+        }
+        private DateTime _currentTime;
 
+        public TimeSpan CurrentTime
+        {
+            set
+            {
+                _currentTime = DateTime.MinValue.Add(_player.CurrentTime);
+                CurrentTimeLb.Content = _currentTime.ToString("mm:ss");
+            }
+        }
         public MainWindow()
         {
             _player = new Mp3Player();
@@ -51,9 +68,6 @@ namespace MP3Testing
 
             _player.NextPlayEvent += NextPlayEventHandler;
 
-            Resources.MergedDictionaries.Clear();
-            var themeResources = Application.LoadComponent(new Uri("ExpressionDark.xaml", UriKind.Relative)) as ResourceDictionary;
-            Resources.MergedDictionaries.Add(themeResources);
         }
 
         private void MainWindow_OnClosing(object sender, CancelEventArgs e)
@@ -83,34 +97,35 @@ namespace MP3Testing
             }
         }
 
+        
         public void NextPlayEventHandler(int index, MediaInfo info)
         {
+            /* 리스트 뷰 선택  해제 */
             foreach (ListViewItem i in FileList.Items)
             {
                 i.IsSelected = false;
             }
 
+            /* 다음 곡 리스트 뷰 아이템 선택  */
             var item = (ListViewItem)FileList.Items[index];
             item.IsSelected = true;
 
+            /* 스크롤 진행 */
             FileList.ScrollIntoView(item);  // scroll 이동
 
-            _totalTime = DateTime.MinValue.Add(info.TotalTime);
-            FormatConvertedBitmap fcb = new FormatConvertedBitmap();
+            // 전체 시간 업데이트
+            TotalTime = info.TotalTime;
 
-            fcb.BeginInit();
-            fcb.Source = (BitmapSource)info.Image;
-            fcb.DestinationFormat = PixelFormats.Gray32Float;
-            fcb.EndInit();
+            // 배경 업데이트
+            UpdateBackground((BitmapSource)info.Image);
 
-            MainBorder.Background = new ImageBrush(fcb);
-            SongInfoCtrl.TitleLabel.Content = info.Title;
-            SongInfoCtrl.AlbumArtImage.Source = info.Image;
-            SongInfoCtrl.ArtistLabel.Content = info.Artist;
-            SongInfoCtrl.AlbumLabel.Content = info.Album;
+            // 곡 정보 업데이트
+            SongInfoCtrl.Info = info;
+            
+            // 탐색 바 최대치 변경
+            SeekBar.Maximum = _player.TotalLength;
 
-            TotalTimeLb.Content = _totalTime.ToString("mm:ss");
-   
+            // 타이머 시작
             TimerStart();
         }
 
@@ -121,16 +136,18 @@ namespace MP3Testing
                 _timer.Stop();
             }
 
-            _timer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 1) };
+            _timer = new DispatcherTimer { Interval = new TimeSpan(0, 0, 0, 0, 30) };
             _timer.Tick += TimerOnTick;
             _timer.Start();
         }
 
         private void TimerOnTick(object sender, EventArgs eventArgs)
         {
-            var currentTime = DateTime.MinValue.Add(_player.CurrentTime); // 현재 시간을 가져온다
-            SeekBar.Value = _player.Position;   // Seekbar 의 포지션을 옮긴다
-            CurrentTime.Content = currentTime.ToString("mm:ss");
+            if (!_posChange)
+            {
+                CurrentTime = _player.CurrentTime;
+                SeekBar.Value = _player.Position;   // Seekbar 의 포지션을 옮긴다
+            }
         }
 
         private void PlayButtonHandler(object sender, RoutedEventArgs e)
@@ -138,7 +155,7 @@ namespace MP3Testing
             try
             {
                 SeekBar.Value = 0;
-                CurrentTime.Content = "00:00";
+                CurrentTimeLb.Content = "00:00";
                 if (FileList.SelectedIndex >= 0)
                 {
                     if (_timer != null)
@@ -149,23 +166,13 @@ namespace MP3Testing
                     if (!(_player.State is PauseState))
                     {
                         var info = _player.GetMediaInfo(FileList.SelectedIndex);
-                        _totalTime = DateTime.MinValue.Add(info.TotalTime);
-                        Title = info.Title + "::" + info.Artist;
                         
-                        FormatConvertedBitmap fcb = new FormatConvertedBitmap();
-                       
-                        fcb.BeginInit();
-                        fcb.Source = (BitmapSource)info.Image;
-                        fcb.DestinationFormat = PixelFormats.Gray32Float;
-                        fcb.EndInit();
+                        TotalTime = info.TotalTime;
+                        Title = info.Title + "::" + info.Artist;
 
-                        MainBorder.Background = new ImageBrush(fcb);
-                        SongInfoCtrl.TitleLabel.Content = info.Title;
-                        SongInfoCtrl.AlbumArtImage.Source = info.Image;
-                        SongInfoCtrl.ArtistLabel.Content = info.Artist;
-                        SongInfoCtrl.AlbumLabel.Content = info.Album;
+                        UpdateBackground((BitmapSource) info.Image);
 
-                        TotalTimeLb.Content = _totalTime.ToString("mm:ss");
+                        SongInfoCtrl.Info = info;
                     }
 
                     TimerStart();
@@ -179,11 +186,6 @@ namespace MP3Testing
             {
                 MessageBox.Show(ex.Message);
             }
-        }
-
-        private void StopButtonHandler(object sender, RoutedEventArgs e)
-        {
-            _player.Stop();
         }
 
         private void PauseButtonHandler(object sender, RoutedEventArgs e)
@@ -227,16 +229,25 @@ namespace MP3Testing
             _player.RandomState = true;
         }
 
-        private void SeekBar_OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private bool _posChange = false;
+        private void SeekBar_OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            
+            if (!_posChange)
+            {
+                _posChange = true;
+            }
         }
-
         private void SeekBar_OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (_player != null && _timer != null)
+            if (_posChange)
             {
-                _player.Seek((long)SeekBar.Value);
+                if (_player != null && _timer != null)
+                {
+                    var convertValue = (long) (e.GetPosition(SeekBar).X/(SeekBar.ActualWidth/SeekBar.Maximum));
+                    SeekBar.Value = convertValue;
+                    _player.Seek(convertValue);
+                }
+                _posChange = false;
             }
         }
 
@@ -254,7 +265,15 @@ namespace MP3Testing
         {
             DragMove();
         }
+
+        private void UpdateBackground(BitmapSource source)
+        {
+            var fcb = new FormatConvertedBitmap();
+            fcb.BeginInit();
+            fcb.Source = source;
+            fcb.DestinationFormat = PixelFormats.Gray32Float;
+            fcb.EndInit();
+            MainBorder.Background = new ImageBrush(fcb);
+        }
     }
-
-
 }

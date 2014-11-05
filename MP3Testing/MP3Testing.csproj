@@ -73,6 +73,7 @@
     <Compile Include="AlbumInfoControl.xaml.cs">
       <DependentUpon>AlbumInfoControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Control\SimpleSlider.cs" />
     <Compile Include="Control\SongInfoControl.xaml.cs">
       <DependentUpon>SongInfoControl.xaml</DependentUpon>
     </Compile>

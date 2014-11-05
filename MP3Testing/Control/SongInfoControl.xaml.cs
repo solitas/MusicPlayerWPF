@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,9 +21,27 @@ namespace MP3Testing.Control
     /// </summary>
     public partial class SongInfoControl : UserControl
     {
+        private MediaInfo _info = new MediaInfo();
+        
+        public MediaInfo Info
+        {
+            get
+            {
+                return _info;
+            }
+            set
+            {
+                _info.Album = value.Album;
+                _info.Artist = value.Artist;
+                _info.Title = value.Title;
+                AlbumArtImage.Source = value.Image;
+            }
+        }
+
         public SongInfoControl()
         {
             InitializeComponent();
+            base.DataContext = Info;
         }
     }
 }
